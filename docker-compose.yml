@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+      - "4571:4571"
+    environment:
+      - SERVICES=sns,sqs,lambda
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "./localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/usr/src/app
+    command: sh -c "npm install && serverless deploy" # Alterado para usar o serverless diretamente
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=us-east-1
+      - LOCALSTACK_HOSTNAME=localstack
+      - EDGE_PORT=4566
+    depends_on:
+      - localstack

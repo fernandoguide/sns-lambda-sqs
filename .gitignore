@@ -1,0 +1,53 @@
+# Node modules
+node_modules/
+
+# LocalStack data
+.localstack/
+localstack/
+
+# Serverless Framework output
+.serverless/
+
+# Logs
+*.log
+*.log.*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+
+# Coverage reports
+coverage/
+
+# Package-lock file (if you prefer not to commit it)
+package-lock.json
+
+# Docker-related files
+*.dockerfile
+docker-compose.override.yml
+
+# IDE-specific files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Ignore all .env files
+.env
+

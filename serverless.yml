@@ -1,0 +1,48 @@
+service: sns-lambda-sqs
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: us-east-1
+
+plugins:
+  - serverless-localstack
+
+custom:
+  localstack:
+    stages:
+      - dev
+    endpoint:
+      sns: http://localstack:4566
+      sqs: http://localstack:4566
+      lambda: http://localstack:4566
+    sns:
+      topicName: my-topic  # Adicione o nome do tópico SNS aqui
+
+functions:
+  snsHandler:
+    handler: handler.snsHandler
+    events:
+      - sns:
+          arn: arn:aws:sns:${self:provider.region}:000000000000:my-topic  # Forneça o ARN completo aqui
+
+resources:
+  Resources:
+    SNSTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:custom.sns.topicName}  # Use a configuração do tópico SNS
+    SQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: my-queue
+    SNSTopicSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint:
+          Fn::GetAtt: [SQSQueue, Arn]
+        Protocol: sqs
+        TopicArn:
+          Ref: SNSTopic
+        RawMessageDelivery: 'true'
